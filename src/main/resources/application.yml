@@ -1,0 +1,22 @@
+server:
+  port: 8090
+
+spring:
+  rabbitmq:
+    host: 106.14.187.183
+    port: 5672
+    username: root
+    password: 123456
+
+dubbo:
+  application:
+    name: eden-mall
+  protocol:
+    name: dubbo
+    port: 20880
+  registry:
+    address: zookeeper://106.14.187.183:2181
+  consumer: # 在服务端设置消费端的调用规则
+      timeout: 60000 # 超时时间ms
+      retries: 3  # 重试次数
+      loadbalance: roundrobin # 负载均衡算法，缺省是随机 random。还可以有轮询 roundrobin、最不活跃优先 leastactive
