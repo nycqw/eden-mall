@@ -19,4 +19,6 @@ public class OrderParam implements Serializable {
     private Integer number;
 
     private Long userId;
+
+    private Long orderId;
 }
