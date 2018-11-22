@@ -11,5 +11,5 @@ public interface OrderService {
 
     Long createOrder(OrderParam orderParam);
 
-    Long createOrderByMQ(OrderParam orderParam);
+    Long syncCreateOrder(OrderParam orderParam);
 }

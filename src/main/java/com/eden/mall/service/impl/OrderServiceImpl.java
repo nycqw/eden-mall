@@ -76,7 +76,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Long createOrderByMQ(OrderParam orderParam) {
+    public Long syncCreateOrder(OrderParam orderParam) {
         boolean checkResult = productService.deductingProductStock(orderParam.getProductId(), orderParam.getPurchaseAmount());
         if (checkResult) {
             CorrelationData correlationData = new CorrelationData();
@@ -84,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
             orderParam.setOrderId(orderId);
             correlationData.setId(String.valueOf(orderId));
             // 记录消息日志
-            recordMessageLog(orderId, JSON.toJSONString(orderParam));
+            //recordMessageLog(orderId, JSON.toJSONString(orderParam));
             rabbitTemplate.convertAndSend(RabbitConstants.ORDER_CREATE_EXCHANGE, RabbitConstants.ORDER_CREATE_KEY, JSON.toJSONString(orderParam), correlationData);
             return orderId;
         }

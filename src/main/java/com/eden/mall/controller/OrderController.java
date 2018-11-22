@@ -27,6 +27,15 @@ public class OrderController {
     @RequestMapping("create")
     public Result createOrder(@RequestBody OrderParam orderParam) {
         Long orderId = orderService.createOrder(orderParam);
+        if (orderId == null) {
+            return Result.fail("创建失败");
+        }
+        return Result.success(orderId);
+    }
+
+    @RequestMapping("/sync/create")
+    public Result syncCreateOrder(@RequestBody OrderParam orderParam) {
+        Long orderId = orderService.syncCreateOrder(orderParam);
         return Result.success(orderId);
     }
 
