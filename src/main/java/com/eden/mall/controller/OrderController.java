@@ -1,8 +1,8 @@
 package com.eden.mall.controller;
 
 import com.eden.domain.result.Result;
-import com.eden.mall.domain.OrderParam;
 import com.eden.mall.service.OrderService;
+import com.eden.order.param.OrderParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

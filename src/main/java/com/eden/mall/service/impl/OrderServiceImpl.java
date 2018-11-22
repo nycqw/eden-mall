@@ -4,14 +4,14 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.eden.mall.constants.RabbitConstants;
-import com.eden.mall.domain.OrderParam;
 import com.eden.mall.mapper.MessageLogMapper;
 import com.eden.mall.model.MessageLog;
 import com.eden.mall.service.OrderService;
 import com.eden.mall.utils.SnowFlake;
+import com.eden.order.param.OrderParam;
+import com.eden.order.service.IOrderService;
 import com.eden.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Reference
     private ProductService productService;
+
+    @Reference
+    private IOrderService orderService;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -62,15 +65,27 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Long createOrder(OrderParam orderParam) {
-        boolean checkResult = productService.deductingProductStock(orderParam.getProductId(), orderParam.getNumber());
+        boolean checkResult = productService.deductingProductStock(orderParam.getProductId(), orderParam.getPurchaseAmount());
+        if (checkResult) {
+            Long orderId = SnowFlake.generatingId();
+            orderParam.setOrderId(orderId);
+            orderService.createOrder(orderParam);
+            return orderId;
+        }
+        return null;
+    }
+
+    @Override
+    public Long createOrderByMQ(OrderParam orderParam) {
+        boolean checkResult = productService.deductingProductStock(orderParam.getProductId(), orderParam.getPurchaseAmount());
         if (checkResult) {
             CorrelationData correlationData = new CorrelationData();
             Long orderId = SnowFlake.generatingId();
+            orderParam.setOrderId(orderId);
             correlationData.setId(String.valueOf(orderId));
-            String message = JSON.toJSONString(orderParam);
             // 记录消息日志
-            recordMessageLog(orderId, message);
-            rabbitTemplate.convertAndSend(RabbitConstants.ORDER_CREATE_EXCHANGE, RabbitConstants.ORDER_CREATE_KEY, message, correlationData);
+            recordMessageLog(orderId, JSON.toJSONString(orderParam));
+            rabbitTemplate.convertAndSend(RabbitConstants.ORDER_CREATE_EXCHANGE, RabbitConstants.ORDER_CREATE_KEY, JSON.toJSONString(orderParam), correlationData);
             return orderId;
         }
         return null;

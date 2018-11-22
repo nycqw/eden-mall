@@ -1,9 +1,6 @@
 package com.eden.mall.service;
 
-import com.eden.mall.domain.OrderParam;
-import com.eden.model.TProduct;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.eden.order.param.OrderParam;
 
 /**
  * @author chenqw
@@ -13,4 +10,6 @@ import org.springframework.stereotype.Service;
 public interface OrderService {
 
     Long createOrder(OrderParam orderParam);
+
+    Long createOrderByMQ(OrderParam orderParam);
 }
