@@ -7,10 +7,10 @@ spring:
     port: 5672
     username: root
     password: 123456
-    publisher-confirms: true
-    publisher-returns: true
-    template:
-      mandatory: true
+    #publisher-confirms: true
+    #publisher-returns: true
+    #template:
+      #mandatory: true
   datasource:
     name: eden
     type: com.alibaba.druid.pool.DruidDataSource

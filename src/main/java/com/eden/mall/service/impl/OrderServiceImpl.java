@@ -37,13 +37,10 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @Autowired
-    private MessageLogMapper messageLogMapper;
-
-    @PostConstruct
+    /*@PostConstruct
     private void init() {
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
-            String messageId = correlationData.getId();
+            *//*String messageId = correlationData.getId();
             MessageLog messageLog = messageLogMapper.selectByPrimaryKey(Long.valueOf(messageId));
             if (ack) {
                 // 到达交换机若未被覆盖则表示到达队列
@@ -52,16 +49,16 @@ public class OrderServiceImpl implements OrderService {
                 // 未到达交换机
                 messageLog.setStatus(2);
             }
-            messageLogMapper.updateByPrimaryKey(messageLog);
+            messageLogMapper.updateByPrimaryKey(messageLog);*//*
         });
         // 未到达队列
         rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> {
-            String messageId = message.getMessageProperties().getMessageId();
+            *//*String messageId = message.getMessageProperties().getMessageId();
             MessageLog messageLog = messageLogMapper.selectByPrimaryKey(Long.valueOf(messageId));
             messageLog.setStatus(3);
-            messageLogMapper.updateByPrimaryKey(messageLog);
+            messageLogMapper.updateByPrimaryKey(messageLog);*//*
         });
-    }
+    }*/
 
     @Override
     public Long createOrder(OrderParam orderParam) {
@@ -91,13 +88,4 @@ public class OrderServiceImpl implements OrderService {
         return null;
     }
 
-    private void recordMessageLog(long orderId, String message) {
-        MessageLog messageLog = new MessageLog();
-        messageLog.setCreateTime(new Date());
-        messageLog.setMessage(message);
-        messageLog.setMessageId(orderId);
-        messageLog.setStatus(0);
-        messageLog.setRetryCount(1);
-        messageLogMapper.insert(messageLog);
-    }
 }
