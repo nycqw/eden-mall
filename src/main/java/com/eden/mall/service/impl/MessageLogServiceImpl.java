@@ -26,16 +26,25 @@ public class MessageLogServiceImpl implements IMessageLogService {
     @Async
     @Override
     public void recordLog(Long messageId, String message){
-        MessageLog messageLog = new MessageLog();
-        messageLog.setMessage(message);
-        messageLog.setMessageId(messageId);
-        messageLog.setStatus(MessageStatusEnums.CREATED.getStatus());
-        messageLog.setCreateTime(new Date());
-
-        try {
-            messageLogMapper.insertSelective(messageLog);
-        } catch (Exception e) {
-            log.error("消息日志记录异常...", e);
+        MessageLog messageLog = messageLogMapper.selectByPrimaryKey(messageId);
+        if (messageLog == null) {
+            messageLog = new MessageLog();
+            messageLog.setMessage(message);
+            messageLog.setMessageId(messageId);
+            messageLog.setStatus(MessageStatusEnums.CREATED.getStatus());
+            messageLog.setCreateTime(new Date());
+            try {
+                messageLogMapper.insertSelective(messageLog);
+            } catch (Exception e) {
+                log.error("消息日志记录异常...", e);
+            }
+        } else {
+            messageLog.setRetryCount(messageLog.getRetryCount() + 1);
+            try {
+                messageLogMapper.updateByPrimaryKeySelective(messageLog);
+            } catch (Exception e) {
+                log.error("消息日志记录异常...", e);
+            }
         }
     }
 }

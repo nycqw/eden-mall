@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 import java.util.Date;
 
 /**
- * 消息发布确认回调定义
+ * 消息发布确认回调
  *
  * @author chenqw
  * @version 1.0

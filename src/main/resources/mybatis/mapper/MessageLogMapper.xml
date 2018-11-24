@@ -21,6 +21,16 @@
         where message_id = #{messageId,jdbcType=BIGINT}
     </select>
 
+    <select id="selectOfNeedRetry" resultMap="BaseResultMap">
+        <![CDATA[
+        SELECT id, message_id, message, status, retry_count, create_time, next_retry_time
+        FROM t_message_log
+        WHERE next_retry_time < NOW()
+        AND RETRY_COUNT <= 3
+        AND status <= 0
+        ]]>
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from t_message_log
     where id = #{id,jdbcType=BIGINT}

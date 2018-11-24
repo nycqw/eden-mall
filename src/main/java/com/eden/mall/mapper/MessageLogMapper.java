@@ -2,6 +2,8 @@ package com.eden.mall.mapper;
 
 import com.eden.mall.model.MessageLog;
 
+import java.util.List;
+
 public interface MessageLogMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -14,4 +16,6 @@ public interface MessageLogMapper {
     int updateByPrimaryKeySelective(MessageLog record);
 
     int updateByPrimaryKey(MessageLog record);
+
+    List<MessageLog> selectOfNeedRetry();
 }

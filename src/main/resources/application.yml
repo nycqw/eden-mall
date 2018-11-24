@@ -11,6 +11,9 @@ spring:
     publisher-returns: true
     template:
       mandatory: true
+    listener:
+      simple:
+        acknowledge-mode: manual
   datasource:
     name: eden
     type: com.alibaba.druid.pool.DruidDataSource
