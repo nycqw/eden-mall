@@ -1,4 +1,4 @@
-package com.eden.mall.exception;
+package com.eden.mall.aspect;
 
 import com.eden.domain.result.Result;
 import com.eden.enums.ResultEnum;

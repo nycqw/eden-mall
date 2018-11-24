@@ -7,7 +7,7 @@ import com.eden.order.param.OrderParam;
  * @version 1.0
  * @since 2018/11/17
  */
-public interface OrderService {
+public interface IOrderService {
 
     Long createOrder(OrderParam orderParam);
 

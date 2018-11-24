@@ -4,20 +4,15 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.eden.mall.constants.RabbitConstants;
-import com.eden.mall.mapper.MessageLogMapper;
-import com.eden.mall.model.MessageLog;
-import com.eden.mall.service.OrderService;
+import com.eden.mall.service.IMessageLogService;
+import com.eden.mall.service.IOrderService;
 import com.eden.mall.utils.SnowFlake;
 import com.eden.order.param.OrderParam;
-import com.eden.order.service.IOrderService;
 import com.eden.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.annotation.PostConstruct;
-import java.util.Date;
 
 /**
  * @author chenqw
@@ -26,39 +21,19 @@ import java.util.Date;
  */
 @Service
 @Slf4j
-public class OrderServiceImpl implements OrderService {
+public class OrderServiceImpl implements IOrderService {
 
     @Reference
     private ProductService productService;
 
     @Reference
-    private IOrderService orderService;
+    private com.eden.order.service.IOrderService IOrderService;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    /*@PostConstruct
-    private void init() {
-        rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
-            *//*String messageId = correlationData.getId();
-            MessageLog messageLog = messageLogMapper.selectByPrimaryKey(Long.valueOf(messageId));
-            if (ack) {
-                // 到达交换机若未被覆盖则表示到达队列
-                messageLog.setStatus(1);
-            } else {
-                // 未到达交换机
-                messageLog.setStatus(2);
-            }
-            messageLogMapper.updateByPrimaryKey(messageLog);*//*
-        });
-        // 未到达队列
-        rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> {
-            *//*String messageId = message.getMessageProperties().getMessageId();
-            MessageLog messageLog = messageLogMapper.selectByPrimaryKey(Long.valueOf(messageId));
-            messageLog.setStatus(3);
-            messageLogMapper.updateByPrimaryKey(messageLog);*//*
-        });
-    }*/
+    @Autowired
+    private IMessageLogService messageLogService;
 
     @Override
     public Long createOrder(OrderParam orderParam) {
@@ -66,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
         if (checkResult) {
             Long orderId = SnowFlake.generatingId();
             orderParam.setOrderId(orderId);
-            orderService.createOrder(orderParam);
+            IOrderService.createOrder(orderParam);
             return orderId;
         }
         return null;
@@ -76,13 +51,16 @@ public class OrderServiceImpl implements OrderService {
     public Long syncCreateOrder(OrderParam orderParam) {
         boolean checkResult = productService.deductingProductStock(orderParam.getProductId(), orderParam.getPurchaseAmount());
         if (checkResult) {
-            CorrelationData correlationData = new CorrelationData();
             Long orderId = SnowFlake.generatingId();
             orderParam.setOrderId(orderId);
+            String textMessage = JSON.toJSONString(orderParam);
+            // 消息唯一ID
+            CorrelationData correlationData = new CorrelationData();
             correlationData.setId(String.valueOf(orderId));
+            rabbitTemplate.convertAndSend(RabbitConstants.ORDER_CREATE_EXCHANGE, RabbitConstants.ORDER_CREATE_KEY, textMessage, correlationData);
+
             // 记录消息日志
-            //recordMessageLog(orderId, JSON.toJSONString(orderParam));
-            rabbitTemplate.convertAndSend(RabbitConstants.ORDER_CREATE_EXCHANGE, RabbitConstants.ORDER_CREATE_KEY, JSON.toJSONString(orderParam), correlationData);
+            messageLogService.recordLog(orderId, textMessage);
             return orderId;
         }
         return null;

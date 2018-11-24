@@ -7,10 +7,10 @@ spring:
     port: 5672
     username: root
     password: 123456
-    #publisher-confirms: true
-    #publisher-returns: true
-    #template:
-      #mandatory: true
+    publisher-confirms: true
+    publisher-returns: true
+    template:
+      mandatory: true
   datasource:
     name: eden
     type: com.alibaba.druid.pool.DruidDataSource
@@ -19,6 +19,9 @@ spring:
       url: jdbc:mysql://106.14.187.183:3306/eden
       username: root
       password: Slc13092271475@
+
+mybatis:
+  mapper-locations: classpath:mybatis/mapper/*.xml
 
 dubbo:
   application:

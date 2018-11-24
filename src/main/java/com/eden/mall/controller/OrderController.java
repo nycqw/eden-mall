@@ -1,7 +1,7 @@
 package com.eden.mall.controller;
 
 import com.eden.domain.result.Result;
-import com.eden.mall.service.OrderService;
+import com.eden.mall.service.IOrderService;
 import com.eden.order.param.OrderParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +22,12 @@ import java.util.concurrent.CountDownLatch;
 public class OrderController {
 
     @Autowired
-    private OrderService orderService;
+    private IOrderService orderService;
 
     @RequestMapping("create")
     public Result createOrder(@RequestBody OrderParam orderParam) {
         Long orderId = orderService.createOrder(orderParam);
+        //simulatedHighConcurrency(orderParam);
         if (orderId == null) {
             return Result.fail("创建失败");
         }
@@ -52,7 +53,7 @@ public class OrderController {
                     countDownLatch.await();
                 } catch (InterruptedException e) {
                 }
-                orderService.createOrder(orderParam);
+                orderService.syncCreateOrder(orderParam);
                 log.info("执行完毕，Thread{}=====================================", Thread.currentThread().getName());
             }).start();
         }

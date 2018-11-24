@@ -13,16 +13,19 @@
     <sql id="Base_Column_List">
     id, message_id, message, status, retry_count, create_time, next_retry_time
   </sql>
+
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
         select
         <include refid="Base_Column_List"/>
         from t_message_log
-        where order_id = #{orderId,jdbcType=BIGINT}
+        where message_id = #{messageId,jdbcType=BIGINT}
     </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from t_message_log
     where id = #{id,jdbcType=BIGINT}
   </delete>
+
     <insert id="insert" parameterType="com.eden.mall.model.MessageLog">
     insert into t_message_log (id, message_id, message, 
       status, retry_count, create_time, 
@@ -31,6 +34,7 @@
       #{status,jdbcType=INTEGER}, #{retryCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
       #{nextRetryTime,jdbcType=TIMESTAMP})
   </insert>
+
     <insert id="insertSelective" parameterType="com.eden.mall.model.MessageLog">
         insert into t_message_log
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -80,12 +84,10 @@
             </if>
         </trim>
     </insert>
+
     <update id="updateByPrimaryKeySelective" parameterType="com.eden.mall.model.MessageLog">
         update t_message_log
         <set>
-            <if test="messageId != null">
-                message_id = #{messageId,jdbcType=BIGINT},
-            </if>
             <if test="message != null">
                 message = #{message,jdbcType=VARCHAR},
             </if>
@@ -102,16 +104,16 @@
                 next_retry_time = #{nextRetryTime,jdbcType=TIMESTAMP},
             </if>
         </set>
-        where id = #{id,jdbcType=BIGINT}
+        where message_id = #{messageId,jdbcType=BIGINT}
     </update>
+
     <update id="updateByPrimaryKey" parameterType="com.eden.mall.model.MessageLog">
     update t_message_log
-    set message_id = #{messageId,jdbcType=BIGINT},
-      message = #{message,jdbcType=VARCHAR},
+    set message = #{message,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
       retry_count = #{retryCount,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       next_retry_time = #{nextRetryTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=BIGINT}
+    where message_id = #{messageId,jdbcType=BIGINT}
   </update>
 </mapper>
