@@ -37,13 +37,16 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public Long createOrder(OrderParam orderParam) {
+        log.info("=======================create order begin");
         boolean checkResult = productService.deductingProductStock(orderParam.getProductId(), orderParam.getPurchaseAmount());
         if (checkResult) {
+            log.info("=======================deducting stock success");
             Long orderId = SnowFlake.generatingId();
             orderParam.setOrderId(orderId);
             IOrderService.createOrder(orderParam);
             return orderId;
         }
+        log.info("=======================deducting stock fail");
         return null;
     }
 
