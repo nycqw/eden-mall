@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.eden.mall.mapper.MessageLogMapper;
 import com.eden.mall.model.MessageLog;
-import com.eden.mall.service.IOrderService;
+import com.eden.mall.service.ISecKillService;
 import com.eden.order.param.OrderParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,7 +24,7 @@ public class OrderCreateSchedule {
     private MessageLogMapper messageLogMapper;
 
     @Autowired
-    private IOrderService orderService;
+    private ISecKillService orderService;
 
     @Scheduled(cron = "0 0/1 * * * ? ")
     public void handleOrderCreateFailure() {

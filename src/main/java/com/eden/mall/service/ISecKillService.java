@@ -1,5 +1,6 @@
 package com.eden.mall.service;
 
+import com.eden.mall.domain.BuyParam;
 import com.eden.order.param.OrderParam;
 
 /**
@@ -7,9 +8,9 @@ import com.eden.order.param.OrderParam;
  * @version 1.0
  * @since 2018/11/17
  */
-public interface IOrderService {
+public interface ISecKillService {
 
-    Long createOrder(OrderParam orderParam);
+    Long rushBuy(BuyParam param);
 
     Long syncCreateOrder(OrderParam orderParam);
 }
