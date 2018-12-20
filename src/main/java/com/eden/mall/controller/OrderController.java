@@ -24,7 +24,7 @@ public class OrderController {
     @Autowired
     private ISecKillService orderService;
 
-    @RequestMapping("create")
+    /*@RequestMapping("create")
     public Result createOrder(@RequestBody OrderParam orderParam) {
         Long orderId = orderService.rushBuy(orderParam);
         //simulatedHighConcurrency(orderParam);
@@ -32,7 +32,7 @@ public class OrderController {
             return Result.fail("创建失败");
         }
         return Result.success(orderId);
-    }
+    }*/
 
     @RequestMapping("/sync/create")
     public Result syncCreateOrder(@RequestBody OrderParam orderParam) {
