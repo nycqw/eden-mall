@@ -11,6 +11,4 @@ import com.eden.order.param.OrderParam;
 public interface ISecKillService {
 
     Long rushBuy(BuyParam param);
-
-    Long syncCreateOrder(OrderParam orderParam);
 }

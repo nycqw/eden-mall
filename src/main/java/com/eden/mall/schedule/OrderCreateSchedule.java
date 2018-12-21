@@ -34,7 +34,7 @@ public class OrderCreateSchedule {
         for (MessageLog messageLog : messageLogs) {
             String message = messageLog.getMessage();
             OrderParam orderParam = JSON.parseObject(message, new TypeReference<OrderParam>(){});
-            orderService.syncCreateOrder(orderParam);
+            //orderService.syncCreateOrder(orderParam);
             log.info("消息重发，消息内容：{}", message);
         }
     }

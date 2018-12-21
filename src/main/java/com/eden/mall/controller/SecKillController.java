@@ -1,15 +1,10 @@
 package com.eden.mall.controller;
 
-import com.alibaba.dubbo.config.annotation.Reference;
-import com.eden.domain.request.StockParam;
 import com.eden.domain.result.Result;
 import com.eden.mall.domain.BuyParam;
 import com.eden.mall.service.ISecKillService;
-import com.eden.order.param.OrderParam;
-import com.eden.order.service.IOrderService;
-import com.eden.service.ProductService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +20,7 @@ public class SecKillController {
     private ISecKillService secKillService;
 
     @RequestMapping("/buy")
-    public Result rushBuy(BuyParam param){
+    public Result rushBuy(@RequestBody BuyParam param){
         Long orderId = secKillService.rushBuy(param);
         if (orderId != null) {
             return Result.success(orderId);
