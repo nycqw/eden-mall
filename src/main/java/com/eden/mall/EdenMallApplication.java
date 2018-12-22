@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableDubbo
 @MapperScan("com.eden.mall.mapper")
 @EnableAsync
-@EnableScheduling
 public class EdenMallApplication {
 
     public static void main(String[] args) {
